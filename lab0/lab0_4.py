@@ -20,14 +20,6 @@ def Monty_Hall_Problem_always_stay(K):
     print(np.mean(actual_position_of_car - player_choice == 0))
 
 
-def switch_door(situation):
-    if situation[0] == situation[1]:  # player chose the car door, however he must change them :c
-        return 0
-    else:  # player chose the goat door, however he must change them for car one, because the host is obligated to reveal
-        # goat door
-        return 1
-
-
 def Monty_Hall_Problem_always_switch(K):
     actual_position_of_car = np.array(random.choices([0, 1, 2], k=K))
     player_choice = np.array(random.choices([0, 1, 2], k=K))
@@ -36,6 +28,15 @@ def Monty_Hall_Problem_always_switch(K):
     switch_result = np.apply_along_axis(switch_door, 0, actual_situation)
 
     print(np.mean(switch_result == 1))
+
+
+def switch_door(situation):
+    player_choice, car_position = situation
+    if player_choice == car_position:  # player chose the car door, however he must change them :c
+        return 0
+    else:  # player chose the goat door, however he must change them for car one,
+        # because the host is obligated to reveal goat door
+        return 1
 
 
 Monty_Hall_Problem_always_stay(10000)
