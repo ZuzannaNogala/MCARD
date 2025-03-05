@@ -1,6 +1,6 @@
 ## Methods and Classification and Dimensinality Reduction
 
-Notes from university class during summer semester (II 2024 - VI 2024). 
+Notes from university class during summer semester (III 2024 - VI 2024). 
 
 The course contains information about:
 * dimensionality reduction techniques (PCA, SVD)
