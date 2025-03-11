@@ -26,6 +26,8 @@ print("Predicted values for two dimensional data with myLinearRegression_multiD:
 # model_sklearn.fit(X_2d, y_2d)
 # print(model_sklearn.predict(X_2d) - model2D.predict(X_2d))
 
+# small differences - ok
+
 # Q1.1 b
 
 np.random.seed(42)
@@ -38,7 +40,8 @@ y_train = b_true + a_true * x_train + 0.1 * np.random.randn(n_points, 1)
 model1D = myLinearRegression_multiD()
 model1D.fit(x_train, y_train)
 
-print("Predicted values for one dimensional data with myLinearRegression_multiD:", model1D.predict(x_train))
+print("The class myLinearRegression_multiD() works with 1D data")
+# print("Predicted values for one dimensional data with myLinearRegression_multiD:", model1D.predict(x_train))
 
 # Q1.1 c
 
@@ -53,7 +56,7 @@ y_grid = model2D.predict(X_grid).reshape(x1_grid.shape)
 
 ax.plot_surface(x1_grid, x2_grid, y_grid, color='red', alpha=0.5)
 ax.view_init(0, 0)
-# plt.show()
+plt.show()
 
 # Q1.1 d
 
@@ -74,7 +77,7 @@ model100D.fit(X_100d, y_100d)
 model_sklearn100D = LinearRegression()
 model_sklearn100D.fit(X_100d, y_100d)
 
-L2_norm = ((model_sklearn100D.intercept_ - model100D.betas[0]) ** 2 +
-           np.sum((model_sklearn100D.coef_ - model100D.betas[1:]) ** 2))
+L2_norm = np.sqrt(((model_sklearn100D.intercept_ - model100D.betas[0]) ** 2 +
+           np.sum((model_sklearn100D.coef_ - model100D.betas[1:]) ** 2)))
 
 print("The L2 norm of the difference between the recovered parameter vectors equals: ", L2_norm)
