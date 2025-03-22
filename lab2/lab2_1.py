@@ -1,14 +1,18 @@
 import numpy as np
 from lab2.models import TorchLinearRegression1D
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 import torch
 
 # Setup
 nr_points = 200
 np.random.seed(42)
+
 x_train = np.random.rand(nr_points, 1)
 
-a_true = 2
-b_true = 1
+a_true = 2.0
+b_true = 1.0
 
 y_train = b_true + a_true * x_train + .1 * np.random.randn(nr_points, 1)
 
@@ -17,32 +21,42 @@ y_test = b_true + a_true * x_test + .1 * np.random.randn(50, 1)
 
 # Q2.1
 
-model_LT = TorchLinearRegression1D()
-model_LT.fit(x_train, y_train)
+LinReg = LinearRegression()
+LinReg.fit(x_train, y_train)
+a_est = LinReg.coef_.item()
+b_est = LinReg.intercept_.item()
 
-loss_final = np.mean((float(model_LT.a) * x_test +
-                      float(model_LT.b) - model_LT.predict(x_test)) ** 2)
+loss_final = np.mean((a_est * x_test + b_est - y_test) ** 2)
 
-print(f"Value of MSE of TorchLinearModel is {loss_final}.")
+print(f"Value of loss_final is {loss_final}.")
 
 
 # Q2.2
 
-def g_loss_fun(error, model):
-    return torch.mean(error ** 2) + model.lr * (model.a ** 2 + model.b ** 2)
-
-
-model_LT_gfun = TorchLinearRegression1D(lr=0.1, optimizer_name="sgd")
-model_LT_gfun.fit(x_train, y_train, loss_fun=lambda error:  g_loss_fun(error, model_LT_gfun), verbose=True)
-
-x_train_tensor = torch.from_numpy(np.c_[np.ones((x_train.shape[0], 1)), x_train]).float().to("cpu")
-
-error_model_LT_gfun = (model_LT_gfun.a * x_train_tensor + model_LT_gfun.b -
-                       torch.from_numpy(model_LT_gfun.predict(x_train)).float().to(model_LT_gfun.device))
-
-g_final = g_loss_fun(error_model_LT_gfun, model_LT_gfun)
+model_LT = TorchLinearRegression1D(lmb=0.1, optimizer_name="sgd")
+model_LT.fit(x_train, y_train)
 
 print(f"The most optimal params a and b for g(a, b) loss function"
-      f" are: a = {float(model_LT_gfun.a)}, b = {float(model_LT_gfun.b)}.")
+      f" are: a = {float(model_LT.a)}, b = {float(model_LT.b)}.")
 
-print(f"The value of g(a,b) function with those parameters is: {float(g_final)}.")
+# ok for lambda = 0.001, reps = 10000
+
+# print(np.linalg.inv(np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ np.c_[np.ones((x_train.shape[0], 1)), x_train] +
+#                     0.1 * np.identity(2)) @ np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ y_train)
+
+# Q2.3
+
+lambda_grid = {'lmb': [0.0001, 0.001, 0.01, 0.1, 0.2]}
+
+model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
+grid_search = GridSearchCV(model, lambda_grid, cv=5, scoring='neg_mean_squared_error')
+y_hat = grid_search.fit(x_train, y_train).predict(x_test)
+
+loss_final_cv = mean_squared_error(y_test, y_hat)
+
+model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
+model_2.fit(x_train, y_train)
+
+
+print(f"The best lambda: {grid_search.best_params_['lmb']}, the loss final: {loss_final_cv}")
+print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
