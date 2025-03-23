@@ -40,7 +40,7 @@ print(model_2.b, model_2.a)
 
 # Q2 b
 
-lambda_grid = {'lmb': [0.0001, 0.001, 0.01, 0.1, 0.2]}
+lambda_grid = {'lmb': [0.0001, 0.001, 0.01, 0.1, 0.2, 0.5, 2]}
 
 model = myRidgeRegression_multiD(lr=0.01, n_epochs=1000)
 grid_search = GridSearchCV(model, lambda_grid, cv=5, scoring='neg_mean_squared_error')
@@ -70,8 +70,9 @@ random_search.fit(X_train, Y_train)
 print("RandomizedSearchCV best lambda:", random_search.best_params_['lmb'])
 print("RandomizedSearchCV best CV MSE:", -random_search.best_score_)
 
-model_ridge_reg_randomsearch = myRidgeRegression_multiD(lmb=random_search.best_params_['lmb'])
-Y_prediction_random = model_ridge_reg_randomsearch.fit(X_train, Y_train).predict(X_test)
+Y_hat = random_search.predict(X_test)
+
+print("RandomizedSearchCV best CV MSE (test set):", mean_squared_error(Y_test, Y_hat))
 
 # print(f"MSE on test set of ridge regression model with chosen lambda is: {np.mean((Y_prediction_grid - Y_test) ** 2)}.")
 # print(f"MSE on test set of ridge regression model with RandomizedSearch lambda is: "

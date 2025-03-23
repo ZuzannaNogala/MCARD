@@ -38,9 +38,9 @@ class myRidgeRegression_multiD(RegressorMixin, BaseEstimator):
 
         # Main training loop
         for epoch in range(self.n_epochs):
-            yhat = x_train_tensor @ self.params
+            yhat = torch.matmul(x_train_tensor, self.params)
             error = y_train_tensor - yhat
-            loss = torch.mean(error ** 2) + self.lmb * torch.sum(self.params ** 2)
+            loss = torch.mean(torch.pow(error, 2)) + self.lmb * torch.sum(torch.pow(self.params, 2))
 
             # Backward pass: compute gradients.
             loss.backward()
@@ -176,3 +176,53 @@ class TorchLinearRegression1D(RegressorMixin, BaseEstimator):
         x_tensor = torch.tensor(np.ravel(x), dtype=torch.float32, device=self.device).view(-1, 1)
         y_prediction = self.a * x_tensor + self.b
         return y_prediction.detach().cpu().numpy().flatten()
+
+
+class Recovering:
+
+    def __init__(self, lr=0.06, n_epochs=500, optimizer_name="Adam", W_matrix_from="Random", device=None):
+        self.lr = lr
+        self.n_epochs = n_epochs
+        self.optimizer_name = optimizer_name
+        self.W_matrix_form = W_matrix_from
+        self.W_r = None
+        self.H_r = None
+        self.device = device if device is not None else torch.device("cpu")
+        self.loss_list = []
+
+    def fit(self, Z, r, dist_pow, verbose=True):
+        self.loss_list = []
+
+        W_r = torch.randn((Z.shape[0], r), requires_grad=True, dtype=torch.float, device=self.device)
+        H_r = torch.randn((r, Z.shape[1]), requires_grad=True, dtype=torch.float, device=self.device)
+
+        if self.W_matrix_form.lower() == "symmeric":
+            print("d")
+
+        if self.optimizer_name.lower() == "sgd":
+            optimizer = torch.optim.SGD([W_r, H_r], lr=self.lr)
+        elif self.optimizer_name.lower() == "adam":
+            optimizer = torch.optim.Adam([W_r, H_r], lr=self.lr)
+        else:
+            raise ValueError("Unsupported optimizer. Choose 'SGD' or 'Adam'.")
+
+        for epoch in range(self.n_epochs):
+            loss = torch.mean(torch.pow(Z - torch.matmul(W_r, H_r), dist_pow))
+
+            loss.backward()
+
+            optimizer.step()
+            optimizer.zero_grad()
+
+            if epoch % 10 == 0:
+                self.loss_list.append(loss.item())
+                if verbose:
+                    print(f"Epoch {epoch}: loss = {loss.item():.4f}")
+
+        self.W_r = W_r
+        self.H_r = H_r
+
+    def get_recovered_Z(self):
+        return torch.matmul(self.W_r, self.H_r)
+
+

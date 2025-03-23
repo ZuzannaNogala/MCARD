@@ -1,5 +1,5 @@
 import numpy as np
-from lab2.models import TorchLinearRegression1D
+from lab2.models import TorchLinearRegression1D, myRidgeRegression_multiD
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
@@ -48,15 +48,19 @@ print(f"The most optimal params a and b for g(a, b) loss function"
 
 lambda_grid = {'lmb': [0.0001, 0.001, 0.01, 0.1, 0.2]}
 
-model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
+# model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
+
+model = myRidgeRegression_multiD(lr=0.1, n_epochs=1000)
 grid_search = GridSearchCV(model, lambda_grid, cv=5, scoring='neg_mean_squared_error')
 y_hat = grid_search.fit(x_train, y_train).predict(x_test)
 
 loss_final_cv = mean_squared_error(y_test, y_hat)
 
-model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
+# model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
+model_2 = myRidgeRegression_multiD(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
 model_2.fit(x_train, y_train)
 
 
 print(f"The best lambda: {grid_search.best_params_['lmb']}, the loss final: {loss_final_cv}")
-print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
+# print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
+print(f"Then the a = {model_2.params}")
