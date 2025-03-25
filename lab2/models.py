@@ -3,6 +3,13 @@ import torch
 from sklearn.base import RegressorMixin, BaseEstimator
 
 
+def greater_than_half(Matrix):
+    with torch.no_grad():
+        elements_to_fix = Matrix < 0.5
+        Matrix[elements_to_fix] = 0.501  # In-place modification without creating new tensors
+    return Matrix
+
+
 class myRidgeRegression_multiD(RegressorMixin, BaseEstimator):
 
     def __init__(self, lr=0.06, lmb=0, n_epochs=500, optimizer_name="Adam", device=None):
@@ -180,11 +187,10 @@ class TorchLinearRegression1D(RegressorMixin, BaseEstimator):
 
 class Recovering:
 
-    def __init__(self, lr=0.06, n_epochs=500, optimizer_name="Adam", W_matrix_from="Random", device=None):
+    def __init__(self, lr=0.06, n_epochs=500, optimizer_name="Adam",device=None):
         self.lr = lr
         self.n_epochs = n_epochs
         self.optimizer_name = optimizer_name
-        self.W_matrix_form = W_matrix_from
         self.W_r = None
         self.H_r = None
         self.device = device if device is not None else torch.device("cpu")
@@ -196,9 +202,6 @@ class Recovering:
         W_r = torch.randn((Z.shape[0], r), requires_grad=True, dtype=torch.float, device=self.device)
         H_r = torch.randn((r, Z.shape[1]), requires_grad=True, dtype=torch.float, device=self.device)
 
-        if self.W_matrix_form.lower() == "symmeric":
-            print("d")
-
         if self.optimizer_name.lower() == "sgd":
             optimizer = torch.optim.SGD([W_r, H_r], lr=self.lr)
         elif self.optimizer_name.lower() == "adam":
@@ -207,6 +210,7 @@ class Recovering:
             raise ValueError("Unsupported optimizer. Choose 'SGD' or 'Adam'.")
 
         for epoch in range(self.n_epochs):
+
             loss = torch.mean(torch.pow(Z - torch.matmul(W_r, H_r), dist_pow))
 
             loss.backward()
@@ -220,6 +224,68 @@ class Recovering:
                     print(f"Epoch {epoch}: loss = {loss.item():.4f}")
 
         self.W_r = W_r
+        self.H_r = H_r
+
+    def fit_H_greater_than_half(self, Z, r, dist_pow, verbose=True):
+        self.loss_list = []
+
+        W_r = torch.randn((Z.shape[0], r), requires_grad=True, dtype=torch.float, device=self.device)
+        H_r = torch.randn((r, Z.shape[1]), requires_grad=True, dtype=torch.float, device=self.device)
+
+        if self.optimizer_name.lower() == "sgd":
+            optimizer = torch.optim.SGD([W_r, H_r], lr=self.lr)
+        elif self.optimizer_name.lower() == "adam":
+            optimizer = torch.optim.Adam([W_r, H_r], lr=self.lr)
+        else:
+            raise ValueError("Unsupported optimizer. Choose 'SGD' or 'Adam'.")
+
+        for epoch in range(self.n_epochs):
+            H2_r = greater_than_half(H_r)
+
+            loss = torch.mean(torch.pow(Z - torch.matmul(W_r, H2_r), dist_pow))
+
+            loss.backward()
+
+            optimizer.step()
+            optimizer.zero_grad()
+
+            if epoch % 10 == 0:
+                self.loss_list.append(loss.item())
+                if verbose:
+                    print(f"Epoch {epoch}: loss = {loss.item():.4f}")
+
+        self.W_r = W_r
+        self.H_r = greater_than_half(H_r)
+
+    def fit_nonnegativeW(self, Z, r, dist_pow, verbose=True):
+        self.loss_list = []
+
+        W_r = torch.randn((Z.shape[0], r), requires_grad=True, dtype=torch.float, device=self.device)
+        H_r = torch.randn((r, Z.shape[1]), requires_grad=True, dtype=torch.float, device=self.device)
+
+        if self.optimizer_name.lower() == "sgd":
+            optimizer = torch.optim.SGD([W_r, H_r], lr=self.lr)
+        elif self.optimizer_name.lower() == "adam":
+            optimizer = torch.optim.Adam([W_r, H_r], lr=self.lr)
+        else:
+            raise ValueError("Unsupported optimizer. Choose 'SGD' or 'Adam'.")
+
+        for epoch in range(self.n_epochs):
+            W2_r = torch.exp(W_r)
+
+            loss = torch.mean(torch.pow(Z - torch.matmul(W2_r, H_r), dist_pow))
+
+            loss.backward()
+
+            optimizer.step()
+            optimizer.zero_grad()
+
+            if epoch % 10 == 0:
+                self.loss_list.append(loss.item())
+                if verbose:
+                    print(f"Epoch {epoch}: loss = {loss.item():.4f}")
+
+        self.W_r = torch.exp(W_r)
         self.H_r = H_r
 
     def get_recovered_Z(self):

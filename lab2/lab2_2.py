@@ -48,10 +48,11 @@ grid_search.fit(X_train, Y_train)
 y_hat = grid_search.best_estimator_.predict(X_test)
 
 print(grid_search.cv_results_.get('mean_test_score'))
+grid_search.cv_results_.get()
 
 print("GridSearchCV best lambda:", grid_search.best_params_['lmb'])
 print("GridSearchCV best CV MSE:", -grid_search.best_score_)
-print("GridSearchCV best CV MSE (test set):", mean_squared_error(Y_test,y_hat))
+print("GridSearchCV best CV MSE (test set):", mean_squared_error(Y_test, y_hat))
 
 
 model_linear_reg = myLinearRegression_multiD()
@@ -73,9 +74,3 @@ print("RandomizedSearchCV best CV MSE:", -random_search.best_score_)
 Y_hat = random_search.predict(X_test)
 
 print("RandomizedSearchCV best CV MSE (test set):", mean_squared_error(Y_test, Y_hat))
-
-# print(f"MSE on test set of ridge regression model with chosen lambda is: {np.mean((Y_prediction_grid - Y_test) ** 2)}.")
-# print(f"MSE on test set of ridge regression model with RandomizedSearch lambda is: "
-#       f"{np.mean((Y_prediction_grid - Y_test) ** 2)}.")
-# print(f"MSE on test set of classic linear model is: {np.mean((Y_prediction - Y_test) ** 2)}.")
-

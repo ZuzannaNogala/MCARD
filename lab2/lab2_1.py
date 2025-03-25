@@ -34,33 +34,32 @@ print(f"Value of loss_final is {loss_final}.")
 # Q2.2
 
 model_LT = TorchLinearRegression1D(lmb=0.1, optimizer_name="sgd")
-model_LT.fit(x_train, y_train)
+model_LT.fit(x_train, y_train, verbose=True)
 
 print(f"The most optimal params a and b for g(a, b) loss function"
       f" are: a = {float(model_LT.a)}, b = {float(model_LT.b)}.")
 
-# ok for lambda = 0.001, reps = 10000
-
-# print(np.linalg.inv(np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ np.c_[np.ones((x_train.shape[0], 1)), x_train] +
-#                     0.1 * np.identity(2)) @ np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ y_train)
 
 # Q2.3
 
 lambda_grid = {'lmb': [0.0001, 0.001, 0.01, 0.1, 0.2]}
 
-# model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
+model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
 
-model = myRidgeRegression_multiD(lr=0.1, n_epochs=1000)
+# model = myRidgeRegression_multiD(lr=0.1, n_epochs=1000)
 grid_search = GridSearchCV(model, lambda_grid, cv=5, scoring='neg_mean_squared_error')
 y_hat = grid_search.fit(x_train, y_train).predict(x_test)
 
 loss_final_cv = mean_squared_error(y_test, y_hat)
 
-# model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
-model_2 = myRidgeRegression_multiD(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
+model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
+# model_2 = myRidgeRegression_multiD(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
 model_2.fit(x_train, y_train)
 
 
 print(f"The best lambda: {grid_search.best_params_['lmb']}, the loss final: {loss_final_cv}")
-# print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
-print(f"Then the a = {model_2.params}")
+print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
+# print(f"Then the a = {model_2.params}")
+
+# print(np.linalg.inv(np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ np.c_[np.ones((x_train.shape[0], 1)), x_train] +
+#                     0.1 * np.identity(2)) @ np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ y_train)

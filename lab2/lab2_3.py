@@ -2,10 +2,6 @@ import torch
 import matplotlib.pyplot as plt
 from models import Recovering
 
-# M = torch.randn((2,2))
-# print(M)
-# print(torch.matmul(M, M.T))
-
 
 d = 15
 n = 11
@@ -68,4 +64,20 @@ compute_Recovering_for_chosen_r(int(r2), 4)
 
 # Q3.B
 
+R2 = Recovering(lr=0.02, n_epochs=1000)
+for r in range(1, 9):
+    R2.fit_nonnegativeW(Z, r, dist_pow=2, verbose=False)
+    print(f" The loss for r = {r} = {R2.loss_list[-1]}")
 
+print(Z)
+print(R2.W_r)
+print(R2.get_recovered_Z())
+
+R3 = Recovering(lr=0.02, n_epochs=1000)
+for r in range(1, 12):
+    R3.fit_H_greater_than_half(Z, r, dist_pow=2, verbose=False)
+    print(f" The loss for r = {r} = {R3.loss_list[-1]}")
+
+print(Z)
+print(R3.H_r > 0.5)
+print(R3.get_recovered_Z())
