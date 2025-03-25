@@ -50,6 +50,8 @@ model = TorchLinearRegression1D(lr=0.1, n_epochs=1000)
 grid_search = GridSearchCV(model, lambda_grid, cv=5, scoring='neg_mean_squared_error')
 y_hat = grid_search.fit(x_train, y_train).predict(x_test)
 
+print(-grid_search.score(x_test, y_test))
+
 loss_final_cv = mean_squared_error(y_test, y_hat)
 
 model_2 = TorchLinearRegression1D(lr=0.1, lmb=grid_search.best_params_['lmb'], n_epochs=1000, optimizer_name="sgd")
@@ -61,5 +63,6 @@ print(f"The best lambda: {grid_search.best_params_['lmb']}, the loss final: {los
 print(f"Then the a = {model_2.a.item()}, b = {model_2.b.item()}")
 # print(f"Then the a = {model_2.params}")
 
-# print(np.linalg.inv(np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ np.c_[np.ones((x_train.shape[0], 1)), x_train] +
-#                     0.1 * np.identity(2)) @ np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ y_train)
+print(np.linalg.inv(np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ np.c_[np.ones((x_train.shape[0], 1)), x_train] +
+                    0.1 * np.identity(2)) @ np.c_[np.ones((x_train.shape[0], 1)), x_train].T @ y_train)
+

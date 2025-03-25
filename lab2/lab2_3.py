@@ -1,5 +1,7 @@
 import torch
+import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.decomposition import TruncatedSVD
 from models import Recovering
 
 
@@ -8,16 +10,15 @@ n = 11
 Z = torch.randint(0, 10, (n, d), dtype=torch.float32)
 
 # Q3.A
+Z_np = Z.detach().numpy()
 
-W, Lmb, V = torch.svd(Z)
-H = torch.matmul(torch.diag(Lmb), V.T)
-# print("Z Shape: ", Z.shape)
-# print("H Shape: ", H.shape)
-# print("U Shape: ", W.shape)
-# print("V Shape: ", V.shape)
+for r in range(1, 12):
+    svd_model = TruncatedSVD(n_components=r)
+    W_r = svd_model.fit_transform(Z_np)
+    H_r = svd_model.components_
+    Z_r = W_r @  H_r
+    print(f"Loss for {r}: {np.mean((Z_np - Z_r) ** 2)}")
 
-print(Z)
-print(torch.matmul(W, H))
 
 R1 = Recovering(lr=0.02, n_epochs=1000)
 loss_dic_dist2 = {}
