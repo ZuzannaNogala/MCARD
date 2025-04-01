@@ -29,7 +29,7 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_
 
 # Q2 a
 
-model_ridge_reg = myRidgeRegression_multiD(lr=0.01, lmb=0.0001, n_epochs=1000)
+model_ridge_reg = myRidgeRegression_multiD(lr=0.01, lmb=0.0001, n_epochs=1000, optimizer_name="sgd")
 model_ridge_reg.fit(x_train, y_train)
 print(model_ridge_reg.params)
 
