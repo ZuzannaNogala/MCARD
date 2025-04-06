@@ -60,6 +60,8 @@ draw_mix_signal_matrix(X1)
 draw_mix_signal_matrix(X2, "A2")
 
 
+# DRAW RECONSTRUCTED S FROM X USING ICA
+
 def draw_reconstructed_S_ICA(X, str_name_A="A1", normalized=True):
     fig = plt.figure(figsize=(14, 8))
 
