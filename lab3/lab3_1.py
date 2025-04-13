@@ -106,7 +106,6 @@ plt.title("2D PCA - X_prim")
 plt.show()
 
 # PCA 2D on original X_circles
-
 PCA_original_2d = decomposition.PCA(n_components=2)
 PCA_2d_fitted = PCA_original_2d.fit_transform(X_circles)
 

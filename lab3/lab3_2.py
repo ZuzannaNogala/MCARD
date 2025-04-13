@@ -2,9 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import FastICA
-import requests
-from io import BytesIO
-from PIL import Image
 
 import imageio
 
@@ -63,8 +60,8 @@ def draw_mix_signal_matrix(X, str_name_A="A1"):
     plt.show()
 
 
-# draw_mix_signal_matrix(X1)
-# draw_mix_signal_matrix(X2, "A2")
+draw_mix_signal_matrix(X1)
+draw_mix_signal_matrix(X2, "A2")
 
 
 # DRAW RECONSTRUCTED S FROM X USING ICA
@@ -92,45 +89,55 @@ def draw_reconstructed_S_ICA(X, str_name_A="A1", normalized=True):
         fig.suptitle(f"Reconstructed S from ICA ({str_name_A}) without normalizing")
 
     ax1 = fig.add_subplot(1, 3, 1)
-    ax1.set_title("Finger print 1")
     ax1.imshow(S_reconstructed[0, :].reshape(h, w), cmap=plt.get_cmap('gray'))
 
     ax2 = fig.add_subplot(1, 3, 2)
-    ax2.set_title("Finger print 2")
     ax2.imshow(S_reconstructed[1, :].reshape(h, w), cmap=plt.get_cmap('gray'))
 
     ax2 = fig.add_subplot(1, 3, 3)
-    ax2.set_title("Finger print 3")
     ax2.imshow(S_reconstructed[2, :].reshape(h, w), cmap=plt.get_cmap('gray'))
 
     plt.show()
 
 
-# draw_reconstructed_S_ICA(X1)
+draw_reconstructed_S_ICA(X1)
 draw_reconstructed_S_ICA(X1, normalized=False)
 
-# draw_reconstructed_S_ICA(X2, str_name_A="A2")
-# draw_reconstructed_S_ICA(X2, str_name_A="A2", normalized=False)
+draw_reconstructed_S_ICA(X2, str_name_A="A2")
+draw_reconstructed_S_ICA(X2, str_name_A="A2", normalized=False)
 
 
-def draw_binary_image(S_recovered):
-    img = S_recovered.reshape([h, w])
+def draw_binary_images(S_recovered, h, w, str_name_A="A1", normalized=True):
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
 
-    threshold = img.mean()
-    print(threshold)
-    binary_image = (img > threshold) * 255 # 255 - write, 0 - black
+    if normalized:
+      fig.suptitle(f"Reconstructed S from ICA ({str_name_A}) with normalizing")
+    else:
+      fig.suptitle(f"Reconstructed S from ICA ({str_name_A}) without normalizing")
 
-    plt.imshow(binary_image, cmap='gray')
-    plt.title(f'Binary Image (Threshold = {threshold})')
-    # plt.axis('off')
+    for i in range(3):
+        img = S_recovered[i, :].reshape([h, w])
+        threshold = img.mean()
+        binary_image = (img > threshold) * 255  # 255 - white, 0 - black
+
+        axes[i].imshow(binary_image, cmap='gray')
+        axes[i].axis('off')
+
+    plt.tight_layout()
     plt.show()
 
 
-# draw_binary_image(do_reconstruction_S_ICA(X1, normalized=True)[0, :])
-# draw_binary_image(do_reconstruction_S_ICA(X1, normalized=True)[1, :])
-# draw_binary_image(do_reconstruction_S_ICA(X1, normalized=True)[2, :])
+# FROM X1
+S_recovered_norm = do_reconstruction_S_ICA(X1, normalized=True)
+S_recovered_nonorm = do_reconstruction_S_ICA(X1)
+
+draw_binary_images(S_recovered_norm, h, w)
+draw_binary_images(S_recovered_nonorm, h, w, normalized=False)
 
 
-draw_binary_image(do_reconstruction_S_ICA(X1)[0, :])
-draw_binary_image(do_reconstruction_S_ICA(X1)[1, :])
-draw_binary_image(do_reconstruction_S_ICA(X1)[2, :])
+# FROM X2
+S_recovered_norm2 = do_reconstruction_S_ICA(X2, normalized=True)
+S_recovered_nonorm2 = do_reconstruction_S_ICA(X2)
+
+draw_binary_images(S_recovered_norm2, h, w, str_name_A = "A2")
+draw_binary_images(S_recovered_nonorm2, h, w, str_name_A = "A2", normalized=False)
