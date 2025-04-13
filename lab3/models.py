@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 
 def loss_g(A, X, labels, eps=1e-12):
