@@ -187,7 +187,7 @@ class TorchLinearRegression1D(RegressorMixin, BaseEstimator):
 
 class Recovering:
 
-    def __init__(self, lr=0.06, n_epochs=500, optimizer_name="Adam",device=None):
+    def __init__(self, lr=0.06, n_epochs=500, optimizer_name="Adam", device=None):
         self.lr = lr
         self.n_epochs = n_epochs
         self.optimizer_name = optimizer_name
@@ -210,7 +210,6 @@ class Recovering:
             raise ValueError("Unsupported optimizer. Choose 'SGD' or 'Adam'.")
 
         for epoch in range(self.n_epochs):
-
             loss = torch.mean(torch.pow(Z - torch.matmul(W_r, H_r), dist_pow))
 
             loss.backward()
