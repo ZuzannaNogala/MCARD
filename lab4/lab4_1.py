@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 # READ DATA
+# 60000 images 28 x 28
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
 n_samples_train, h, w = x_train.shape
@@ -12,15 +13,17 @@ n_samples_test, _, _ = x_test.shape
 
 image_size = h*w
 
+# 60000 images 28 * 28 = 784 (flatten) and normalizing!
 x_train = x_train.reshape(x_train.shape[0], 784) / 255
 x_test = x_test.reshape(x_test.shape[0], 784) / 255
 
 x_train_tensor = torch.tensor(x_train, dtype=torch.float32)
 
-# PYTORCH LARGE
+# PYTORCH LARGE IMPLEMENTATION
 dataset = TensorDataset(x_train_tensor, x_train_tensor)
 dataloader = DataLoader(dataset, batch_size=128, shuffle=True)
 
+# ENCODER AND DECODER
 torch_large_encoder = torch.nn.Sequential(
     torch.nn.Linear(784, 512),
     torch.nn.ELU(),
@@ -64,8 +67,11 @@ x_train_torch_torch_encoded = torch_large_encoder(x_train_tensor)
 
 x_train_torch_large_reconstr = AE_torch_large(x_train_tensor)
 
-plt.figure(figsize=(9, 3))
 toPlot = (x_train, x_train_torch_large_reconstr.detach().numpy())
+textRows = ["orig img", "AE_torch_larger"]
+
+plt.figure(figsize=(9, 3))
+
 for i in range(10):
     for j in range(2):
         ax = plt.subplot(4, 10, 10*j+i+1)
@@ -74,5 +80,12 @@ for i in range(10):
         plt.gray()
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
+        if i == 0:
+            ax.text(-0.35, 0.5, textRows[j],
+                    transform=ax.transAxes,
+                    fontsize=12,
+                    va='center',
+                    ha='right',
+                    color='red')
 
 plt.show()
