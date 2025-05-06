@@ -9,6 +9,6 @@ The course contains information about:
 
 All notes will be provided in Python language using mainly `numpy` and `scikit-learn` libraries. 
 
-Link to project1: -
+Link to project1: https://github.com/basak12123/Recommender_System
 
 Link to project2: -
