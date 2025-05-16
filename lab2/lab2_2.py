@@ -56,7 +56,7 @@ print("GridSearchCV best CV MSE (test set):", mean_squared_error(Y_test, y_hat))
 
 
 model_linear_reg = myLinearRegression_multiD()
-Y_prediction = model_linear_reg.fit(X_train, Y_train).predict(X_test)
+Y_prediction = model_linear_reg.predict(X_test)
 
 print(f"MSE of linear model: {mean_squared_error(Y_test, Y_prediction)}")
 

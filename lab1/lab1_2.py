@@ -13,7 +13,7 @@ y = data.target    # Target: house price (in 100,000's)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
 linear_model = myLinearRegression_multiD()
-y_prediction = linear_model.fit(X_train, y_train).predict(X_test)
+y_prediction = linear_model.predict(X_test)
 mse = mean_squared_error(y_test, y_prediction)
 print("MSE: ", mse)
 
