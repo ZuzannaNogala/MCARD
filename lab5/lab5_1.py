@@ -6,7 +6,7 @@ from datetime import datetime
 from sklearn.metrics import accuracy_score
 from keras.datasets import mnist  # dataset from here, 28x28 images
 
-from lab5.lab5_models import MyNN_ModelFitting
+from lab5.lab5_models import MyTorchBinaryClassifierTrainer
 
 # For reproducibility
 torch.manual_seed(42)
@@ -54,35 +54,35 @@ model_lr_torch_v2 = nn.Sequential(
 )
 
 # TRAINING MODEL model_lr_torch
-# Creating fitting object for model_lr_torch
-model_lr_torch_fitting = MyNN_ModelFitting(model=model_lr_torch)
+# Creating trainer object for model_lr_torch
+model_lr_torch_training = MyTorchBinaryClassifierTrainer(model=model_lr_torch)
 
 # Create a TensorDataset and DataLoader for model_lr_torch (the same dataloader will be used for the second model)
-model_lr_torch_fitting.create_dataloader(x_train2, y_train2)
-dataloader = model_lr_torch_fitting.dataloader
+model_lr_torch_training.create_dataloader(x_train2, y_train2)
+dataloader = model_lr_torch_training.dataloader
 
-# FITTING model_lr_torch
+# TRAINING model_lr_torch
 start_time = datetime.now()
-model_lr_torch_fitting.fit()
+model_lr_torch_training.fit()
 time_elapsed = datetime.now() - start_time
 print('TRAINING TIME (hh:mm:ss.ms) {}'.format(time_elapsed))
 
 
 # TRAINING MODEL model_lr_torch_v2
-# Creating fitting object for model_lr_torch_v2 with previous used dataloader
-model_lr_torch_v2_fitting = MyNN_ModelFitting(model=model_lr_torch_v2,
-                                              dataloader=dataloader,
-                                              loss_function=nn.BCEWithLogitsLoss())
+# Creating trainer object for model_lr_torch_v2 with previous used dataloader
+model_lr_torch_v2_training = MyTorchBinaryClassifierTrainer(model=model_lr_torch_v2,
+                                                            dataloader=dataloader,
+                                                            loss_function=nn.BCEWithLogitsLoss())
 
-# FITTING model_lr_torch_v2
+# TRAINING model_lr_torch_v2
 start_time = datetime.now()
-model_lr_torch_v2_fitting.fit()
+model_lr_torch_v2_training.fit()
 time_elapsed = datetime.now() - start_time
 print('TRAINING TIME (hh:mm:ss.ms) {}'.format(time_elapsed))
 
 # COMPARISON OF ACCURACY
-x_test2_pred_output_probs = model_lr_torch_fitting.predict(x_test2)
-x_test2_pred_output_probs_v2 = model_lr_torch_v2_fitting.predict(x_test2)
+x_test2_pred_output_probs = model_lr_torch_training.predict(x_test2)
+x_test2_pred_output_probs_v2 = model_lr_torch_v2_training.predict(x_test2)
 
 x_test2_pred_output_classes = (x_test2_pred_output_probs > 0.5)
 x_test2_pred_output_classes_v2 = (nn.Sigmoid()(x_test2_pred_output_probs_v2) > 0.5)
