@@ -59,6 +59,8 @@ def accuracy_and_predictions_model(model, x_test_tensor=X_test_tensor, Y_test=y_
     print("accuracy  = \t\t", accuracy_score(torch_preds, Y_test),
           "correctly cl. cases=", np.sum(torch_preds == Y_test), " out of ", len(Y_test))
 
+    return accuracy_score(torch_preds, Y_test)
+
 
 # Model 1 - training with batch_size = 128
 
@@ -114,3 +116,69 @@ training2.fit(verbose=True)
 print("PyTorch training took {:.2f} seconds".format(time.time() - start_time))
 
 accuracy_and_predictions_model(WineClassifer_torch_model2)
+
+
+# Average results:
+
+K = 20
+acc_results = np.zeros((K, 2))
+
+for i in range(K):
+    print(f"Id of Iteration {i}:")
+
+    train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+    train_loader = create_dataloader(train_dataset, batch_size=128)
+
+    WineClassifer_torch_model = nn.Sequential(
+        nn.Linear(13, 8),
+        nn.ReLU(),
+        nn.Linear(8, 5),
+        nn.ReLU(),
+        nn.Linear(5, num_classes),
+        nn.Softmax(dim=1)
+    ).to(device)
+    print(" ")
+    print("MODEL 1 (batch_size=128)")
+
+    training1 = MyTorchClassifierTrainer(model=WineClassifer_torch_model,
+                                         dataloader=train_loader,
+                                         num_epochs=500,
+                                         loss_function=categorical_crossentropy)
+
+    start_time = time.time()
+    training1.fit(verbose=False)
+    print("PyTorch training took {:.2f} seconds".format(time.time() - start_time))
+
+    acc_1 = accuracy_and_predictions_model(WineClassifer_torch_model)
+
+    # Model 2 - training with batch_size = 16
+
+    train_loader2 = create_dataloader(train_dataset, batch_size=16)
+
+    WineClassifer_torch_model2 = nn.Sequential(
+        nn.Linear(13, 8),
+        nn.ReLU(),
+        nn.Linear(8, 5),
+        nn.ReLU(),
+        nn.Linear(5, num_classes),
+        nn.Softmax(dim=1)
+    ).to(device)
+
+    print(" ")
+    print("MODEL 2 (batch_size=16)")
+
+    training2 = MyTorchClassifierTrainer(model=WineClassifer_torch_model2,
+                                         dataloader=train_loader2,
+                                         num_epochs=500,
+                                         loss_function=categorical_crossentropy)
+
+    start_time = time.time()
+    training2.fit(verbose=False)
+    print("PyTorch training took {:.2f} seconds".format(time.time() - start_time))
+
+    acc_2 = accuracy_and_predictions_model(WineClassifer_torch_model2)
+
+    acc_results[i, :] = [acc_1, acc_2]
+
+
+print(acc_results.mean(axis=0))
