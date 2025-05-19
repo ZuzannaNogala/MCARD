@@ -6,7 +6,7 @@ from datetime import datetime
 from sklearn.metrics import accuracy_score
 from keras.datasets import mnist  # dataset from here, 28x28 images
 
-from lab5.lab5_models import MyTorchBinaryClassifierTrainer
+from lab5.lab5_models import MyTorchClassifierTrainer
 
 # For reproducibility
 torch.manual_seed(42)
@@ -55,7 +55,7 @@ model_lr_torch_v2 = nn.Sequential(
 
 # TRAINING MODEL model_lr_torch
 # Creating trainer object for model_lr_torch
-model_lr_torch_training = MyTorchBinaryClassifierTrainer(model=model_lr_torch)
+model_lr_torch_training = MyTorchClassifierTrainer(model=model_lr_torch)
 
 # Create a TensorDataset and DataLoader for model_lr_torch (the same dataloader will be used for the second model)
 model_lr_torch_training.create_dataloader(x_train2, y_train2)
@@ -70,9 +70,9 @@ print('TRAINING TIME (hh:mm:ss.ms) {}'.format(time_elapsed))
 
 # TRAINING MODEL model_lr_torch_v2
 # Creating trainer object for model_lr_torch_v2 with previous used dataloader
-model_lr_torch_v2_training = MyTorchBinaryClassifierTrainer(model=model_lr_torch_v2,
-                                                            dataloader=dataloader,
-                                                            loss_function=nn.BCEWithLogitsLoss())
+model_lr_torch_v2_training = MyTorchClassifierTrainer(model=model_lr_torch_v2,
+                                                      dataloader=dataloader,
+                                                      loss_function=nn.BCEWithLogitsLoss())
 
 # TRAINING model_lr_torch_v2
 start_time = datetime.now()

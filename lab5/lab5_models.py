@@ -5,7 +5,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 
 
-class MyTorchBinaryClassifierTrainer:
+class MyTorchClassifierTrainer:
 
     def __init__(self, model, dataloader=None, lr=0.01, num_epochs=150, loss_function=nn.BCELoss()):
         self.model = model
