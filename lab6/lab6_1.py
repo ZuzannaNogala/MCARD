@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
+from sklearn.tree import DecisionTreeClassifier  # Import Decision Tree Classifier
 from sklearn.ensemble import AdaBoostClassifier
 
 # Set seed for reproducibility
@@ -42,13 +42,14 @@ y_min, y_max = x_train[:, 1].min() - 0.5, x_train[:, 1].max() + 0.5
 xx, yy = np.meshgrid(np.linspace(x_min, x_max, 100), np.linspace(y_min, y_max, 100))
 
 
-def plot_boundries(xx, yy, ax, tree_classificator):
-    Z_dec = tree_classificator.predict(np.c_[xx.ravel(), yy.ravel()])
-    Z_dec = Z_dec.reshape(xx.shape)
-    ax.contourf(xx, yy, Z_dec, alpha=0.26)
+def plot_boundaries(x, y, ax, tree_classificator):
+    Z_dec = tree_classificator.predict(np.c_[x.ravel(), y.ravel()])
+    Z_dec = Z_dec.reshape(x.shape)
+    ax.contourf(x, y, Z_dec, alpha=0.26)
 # cmap="bwr"
 
-# Tree Classificators Fitting:
+
+# Tree Classifiers Fitting:
 clf_tree_1 = DecisionTreeClassifier(max_depth=1)
 clf_tree_1.fit(x_train, y_train01)
 
@@ -76,18 +77,18 @@ clf_tree_3.fit(x_train, y_train01)
 #                    proportion=True,
 #                    filled=True)
 
-# Tree Classificators Accuracy:
+# Tree Classifiers Accuracy:
 
 y_tree_1_prediction = clf_tree_1.predict(x_test)
 y_tree_2_prediction = clf_tree_2.predict(x_test)
 y_tree_3_prediction = clf_tree_3.predict(x_test)
 
 
-print("TREE classifier (max_depth=1), ACC = ", accuracy_score(y_tree_1_prediction,y_test01))
-print("TREE classifier (max_depth=2), ACC = ", accuracy_score(y_tree_2_prediction,y_test01))
-print("TREE classifier (max_depth=3), ACC = ", accuracy_score(y_tree_3_prediction,y_test01))
+print("TREE classifier (max_depth=1), ACC = ", accuracy_score(y_tree_1_prediction, y_test01))
+print("TREE classifier (max_depth=2), ACC = ", accuracy_score(y_tree_2_prediction, y_test01))
+print("TREE classifier (max_depth=3), ACC = ", accuracy_score(y_tree_3_prediction, y_test01))
 
-# Tree Classificators display:
+# Tree Classifiers display:
 # "Train set: class +1 (blue) inside circle, class -1 (orange) in ring"
 f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharey=True, figsize=(10, 8))
 f.suptitle("Tree classification performance with different choice of max_depth", fontsize=16)
@@ -95,21 +96,21 @@ f.suptitle("Tree classification performance with different choice of max_depth",
 ax1.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax1.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax1.set_title('max_depth=1')
-plot_boundries(xx, yy, ax1, clf_tree_1)
+plot_boundaries(xx, yy, ax1, clf_tree_1)
 ax1.legend()
 ax1.grid(True)
 
 ax2.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax2.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax2.set_title('max_depth=2')
-plot_boundries(xx, yy, ax2, clf_tree_2)
+plot_boundaries(xx, yy, ax2, clf_tree_2)
 ax2.legend()
 ax2.grid(True)
 
 ax3.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax3.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax3.set_title('max_depth=3')
-plot_boundries(xx, yy, ax3, clf_tree_3)
+plot_boundaries(xx, yy, ax3, clf_tree_3)
 ax3.legend()
 ax3.grid(True)
 
@@ -133,9 +134,9 @@ y_Ada_2_prediction = clf_Ada_2.predict(x_test)
 y_Ada_3_prediction = clf_Ada_3.predict(x_test)
 
 
-print("ADA classifier on tree with max_depth=1, ACC = ", accuracy_score(y_Ada_1_prediction,y_test01))
-print("ADA classifier on tree with max_depth=2, ACC = ", accuracy_score(y_Ada_2_prediction,y_test01))
-print("ADA classifier on tree with max_depth=3, ACC = ", accuracy_score(y_Ada_3_prediction,y_test01))
+print("ADA classifier on tree with max_depth=1, ACC = ", accuracy_score(y_Ada_1_prediction, y_test01))
+print("ADA classifier on tree with max_depth=2, ACC = ", accuracy_score(y_Ada_2_prediction, y_test01))
+print("ADA classifier on tree with max_depth=3, ACC = ", accuracy_score(y_Ada_3_prediction, y_test01))
 
 # Display performance of AdaBoost
 
@@ -145,21 +146,21 @@ f.suptitle("AdaBoost performance with different tree classifier", fontsize=16)
 ax1.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax1.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax1.set_title('max_depth=1')
-plot_boundries(xx, yy, ax1, clf_Ada_1)
+plot_boundaries(xx, yy, ax1, clf_Ada_1)
 ax1.legend()
 ax1.grid(True)
 
 ax2.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax2.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax2.set_title('max_depth=2')
-plot_boundries(xx, yy, ax2, clf_Ada_2)
+plot_boundaries(xx, yy, ax2, clf_Ada_2)
 ax2.legend()
 ax2.grid(True)
 
 ax3.scatter(x_train[y_train01 == 0][:, 0], x_train[y_train01 == 0][:, 1], c='orange', label='class 0')
 ax3.scatter(x_train[y_train01 == 1][:, 0], x_train[y_train01 == 1][:, 1], c='blue', label='class 1')
 ax3.set_title('max_depth=3')
-plot_boundries(xx, yy, ax3, clf_Ada_3)
+plot_boundaries(xx, yy, ax3, clf_Ada_3)
 ax3.legend()
 ax3.grid(True)
 
