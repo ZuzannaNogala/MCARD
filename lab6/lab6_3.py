@@ -1,6 +1,3 @@
-import numpy as np
-import matplotlib.pyplot as plt
-
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -28,9 +25,9 @@ clf_RandomForest.fit(X_train, y_train)
 
 # AdaBoost
 
-clf_Ada_tree_1 = AdaBoostClassifier(estimator=clf_tree_1,  n_estimators=50)
-clf_Ada_tree_2 = AdaBoostClassifier(estimator=clf_tree_2,  n_estimators=50)
-clf_Ada_tree_3 = AdaBoostClassifier(estimator=clf_tree_3,  n_estimators=50)
+clf_Ada_tree_1 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1),  n_estimators=50)
+clf_Ada_tree_2 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=2),  n_estimators=50)
+clf_Ada_tree_3 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=3),  n_estimators=50)
 
 clf_Ada_RandomForest = AdaBoostClassifier(estimator=clf_RandomForest, n_estimators=50)
 

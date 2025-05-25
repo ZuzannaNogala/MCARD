@@ -118,13 +118,13 @@ plt.show()
 
 # Improve tree classificator with AdaBoost:
 
-clf_Ada_1 = AdaBoostClassifier(clf_tree_1, n_estimators=60, random_state=322)
+clf_Ada_1 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=1), n_estimators=60, random_state=322)
 clf_Ada_1.fit(x_train, y_train01)
 
-clf_Ada_2 = AdaBoostClassifier(clf_tree_2, n_estimators=60, random_state=322)
+clf_Ada_2 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=2), n_estimators=60, random_state=322)
 clf_Ada_2.fit(x_train, y_train01)
 
-clf_Ada_3 = AdaBoostClassifier(clf_tree_3, n_estimators=60, random_state=322)
+clf_Ada_3 = AdaBoostClassifier(estimator=DecisionTreeClassifier(max_depth=3), n_estimators=60, random_state=322)
 clf_Ada_3.fit(x_train, y_train01)
 
 # AdaBoost accuracy:
