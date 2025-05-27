@@ -89,7 +89,7 @@ print("TREE classifier (max_depth=2), ACC = ", accuracy_score(y_tree_2_predictio
 print("TREE classifier (max_depth=3), ACC = ", accuracy_score(y_tree_3_prediction, y_test01))
 
 # Tree Classifiers display:
-# "Train set: class +1 (blue) inside circle, class -1 (orange) in ring"
+
 f, (ax1, ax2, ax3) = plt.subplots(1, 3, sharey=True, figsize=(10, 8))
 f.suptitle("Tree classification performance with different choice of max_depth", fontsize=16)
 
