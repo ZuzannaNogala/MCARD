@@ -22,8 +22,8 @@ X_train_BoW = newsgroups_BoW_vect.fit_transform(X_train)
 
 
 # LOAD GOOGLE PRETRAIN MODEL
-w2v_google = KeyedVectors.load_word2vec_format('/Users/zuza/GoogleNews-vectors-negative300-SLIM.bin',
-                                               binary=True)
+file_path = '/Users/zuza/GoogleNews-vectors-negative300-SLIM.bin'
+w2v_google = KeyedVectors.load_word2vec_format(file_path, binary=True)
 
 
 # CONVERT TEXTS TO COUNT VECTORS (Word2Vec average)
@@ -73,8 +73,8 @@ ax2.set_title("Word2Vec average")
 
 for label in np.unique(y_train):
     idx = np.where(y_train == label)
-    ax1.scatter(X_train_BoW_2d[idx, 0], X_train_BoW_2d[idx, 1], label=label, s=5)
-    ax2.scatter(X_train_w2v_2d[idx, 0], X_train_w2v_2d[idx, 1], label=label, s=5)
+    ax1.scatter(X_train_BoW_2d[idx, 0], X_train_BoW_2d[idx, 1], label=label_names[label], s=5)
+    ax2.scatter(X_train_w2v_2d[idx, 0], X_train_w2v_2d[idx, 1], label=label_names[label], s=5)
 
 ax1.legend(prop={"size": 5})
 ax2.legend(prop={"size": 5})
@@ -93,9 +93,9 @@ ax2.set_title("Word2Vec average")
 
 for label in np.unique(y_train):
     idx = np.where(y_train == label)
-    ax1.scatter(X_train_BoW_3d[idx, 0], X_train_BoW_3d[idx, 1], X_train_BoW_3d[idx, 2], label=label)
-    ax2.scatter(X_train_w2v_3d[idx, 0], X_train_w2v_3d[idx, 1], X_train_w2v_3d[idx, 2], label=label)
+    ax1.scatter(X_train_BoW_3d[idx, 0], X_train_BoW_3d[idx, 1], X_train_BoW_3d[idx, 2], label=label_names[label])
+    ax2.scatter(X_train_w2v_3d[idx, 0], X_train_w2v_3d[idx, 1], X_train_w2v_3d[idx, 2], label=label_names[label])
 
 ax1.legend(prop={"size": 5})
-ax2.legend(prop={"size": 5})
+# ax2.legend(prop={"size": 5})
 plt.show()
