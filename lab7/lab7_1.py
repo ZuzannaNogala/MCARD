@@ -27,6 +27,10 @@ w2v_google = KeyedVectors.load_word2vec_format(file_path, binary=True)
 
 
 # CONVERT TEXTS TO COUNT VECTORS (Word2Vec average)
+# from one sentence, where each word has assigned the value, we compute
+# the average across all words
+# Now, to each sentence we have assigned fixed-size numeric vector
+
 def avg_w2v(texts, model, dim=300):
     vecs = []
     for doc in texts:
